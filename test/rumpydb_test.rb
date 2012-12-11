@@ -52,8 +52,7 @@ describe RumpyDB do
     test.name = "Gianux"
     id = @rumpydb.save(test)
     returned = @rumpydb.find(id)
-    returned.inspect.must_equal test.inspect
-    #returned.name.must_be == "Gianux"
+    returned.must_equal test.inspect
   end
 
 end
