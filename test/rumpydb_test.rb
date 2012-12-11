@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'rumpydb'
+require 'pry'
 
 class TestObject
   attr_accessor :name
@@ -10,10 +11,12 @@ describe RumpyDB do
     FileUtils.rm("rumpy.db", force: true)
     @rumpydb = RumpyDB.new
   end
+
   it "save an object" do
     test_object = TestObject.new
     test_object.name = "rumpelstiltskin"
     @rumpydb.save(test_object)
+    File.read("rumpy.db").wont_be_empty
   end
 
   it "returns an id" do
@@ -35,7 +38,7 @@ describe RumpyDB do
   end
 
 
-  it "returns differents ids when objects" do
+  it "returns differents ids when objects with equal attributes" do
     test1 = TestObject.new
     test1.name = "Gianu"
     id1 = @rumpydb.save(test1)
@@ -51,8 +54,23 @@ describe RumpyDB do
     test = TestObject.new
     test.name = "Gianux"
     id = @rumpydb.save(test)
+    puts id
     returned = @rumpydb.find(id)
-    returned.must_equal test.inspect
+    returned.name.must_equal test.name
+  end
+
+  it "saves multiple objects and find one" do
+    test1 = TestObject.new
+    test1.name = "Gianu1"
+    id1 = @rumpydb.save(test1)
+
+    test2 = TestObject.new
+    test2.name = "Gianu2"
+    id2 = @rumpydb.save(test2)
+    object1 = @rumpydb.find(id1)
+    object2 = @rumpydb.find(id2)
+    object1.name.must_equal test1.name
+    object2.name.must_equal test2.name
   end
 
 end
