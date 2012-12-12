@@ -24,6 +24,8 @@ class RumpyDB
     end.compact
   end
 
+  alias :all :find_all
+
   def find(id)
     objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
     finded = objects.collect do |row|

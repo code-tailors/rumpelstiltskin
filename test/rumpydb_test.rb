@@ -116,4 +116,17 @@ describe RumpyDB do
     end
   end
 
+  describe "#all" do
+    it "returns all the objects when there are multiple objects" do
+     10.times do |i|
+       test = TestObject.new
+       test.name = "Gianu#{i}"
+       @rumpydb.save(test)
+     end
+
+     all = @rumpydb.all
+     all.size.must_equal 10
+    end
+  end
+
 end
