@@ -13,4 +13,4 @@
 .bundle
 .config
 *.swp
-
+/vendor
