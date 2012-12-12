@@ -39,6 +39,16 @@ class RumpyDB
     raise "RumpyDB::DirtyId" if finded.size > 1
   end
 
+  # Public: Save the register to rumpy db.
+  #  This method save the object every, so if you save an object twice, you'll
+  #  end with 2 objects in rumpy db.
+  #
+  # object - An Object to be saved in rumpy db.
+  #
+  # Examples
+  #   rumpy_db.save(Object.new)
+  #
+  # Returns the id assigned to the object in the db.
   def save(object)
     @id += 1
     open_db('a+') do |file|
