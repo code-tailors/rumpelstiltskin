@@ -13,4 +13,5 @@
 .bundle
 .config
 *.swp
-
+/vendor
+rumpy.db
