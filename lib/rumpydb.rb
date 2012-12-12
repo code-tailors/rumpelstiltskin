@@ -16,6 +16,15 @@ class RumpyDB
     @id = 0
   end
 
+  # Public: Retrieve all the object from the rumpy database.
+  #
+  # Examples
+  #   rumpy_db.find_all
+  #         or
+  #   rumpy_db.all
+  #   #=> [<#Object:0x007ff4aa83fb20>, <#Object:0x007fa4ba76ac19>]
+  #
+  # Returns all the objects from the rumpy database
   def find_all
     objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
     objects.map do |row|
@@ -26,6 +35,15 @@ class RumpyDB
 
   alias :all :find_all
 
+  # Public: Find the object with the given id.
+  #
+  # id - An Integer representing the id of the object
+  #
+  # Examples
+  #   rumpy_db.find(1)
+  #   # => <#Object:0x007ff4aa83fb20>
+  #
+  # Returns the object stored with the given id
   def find(id)
     objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
     finded = objects.collect do |row|
@@ -39,12 +57,51 @@ class RumpyDB
     raise "RumpyDB::DirtyId" if finded.size > 1
   end
 
+  # Public: Save the register to rumpy db.
+  #  This method save the object every, so if you save an object twice, you'll
+  #  end with 2 objects in rumpy db.
+  #
+  # object - An Object to be saved in rumpy db.
+  #
+  # Examples
+  #   rumpy_db.save(Object.new)
+  #   # => 1
+  #
+  # Returns the id assigned to the object in the db.
   def save(object)
     @id += 1
     open_db('a+') do |file|
       file << serialize(@id, object)
     end
     @id
+  end
+
+  # Public: Delete the register with the Given ID.
+  #
+  # rumpy_id - An Integer representing the stored id of the object.
+  #
+  # Examples
+  #   rumpy_db.delete(1)
+  #   # => 1
+  #
+  #   rumpy_db.delete(433443) # non-existing ID
+  #   # => nil
+  #
+  # Returns the id of the deleted object ,nil otherwise.
+  def delete(rumpy_id)
+    objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
+    removed_objects = objects.collect do |row|
+      row =~ Regexp.new("(\\[#{rumpy_id}\\]\.+#{RUMPYDB_SEPARATOR})", Regexp::MULTILINE)
+      $1
+    end.compact
+
+    unless removed_objects.empty?
+      new_db = objects - removed_objects
+      save_db_dump(new_db)
+      return rumpy_id
+    else
+      return nil
+    end
   end
 
   private
@@ -67,5 +124,13 @@ class RumpyDB
 
   def close_db(flush=true)
     File.open(@file_db,'r').close
+  end
+
+  def save_db_dump(objects)
+    file_open = File.open(@file_db, "w:UTF-8")
+    objects.each do |object|
+      file_open << object
+    end
+    file_open.close
   end
 end
