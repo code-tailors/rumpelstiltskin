@@ -19,7 +19,7 @@ class RumpyDB
   def find_all
     objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
     objects.map do |row|
-      row =~ Regexp.new("\\[\\d+\\]\(.+)---EOO", Regexp::MULTILINE)
+      row =~ Regexp.new("\\[\\d+\\]\(.+)#{RUMPYDB_SEPARATOR}", Regexp::MULTILINE)
       deserialize($1)
     end.compact
   end
@@ -27,7 +27,7 @@ class RumpyDB
   def find(id)
     objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
     finded = objects.collect do |row|
-      row =~ Regexp.new("\\[#{id}\\]\(.+)---EOO", Regexp::MULTILINE)
+      row =~ Regexp.new("\\[#{id}\\]\(.+)#{RUMPYDB_SEPARATOR}", Regexp::MULTILINE)
       $1
     end.compact
 
