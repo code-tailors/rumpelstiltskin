@@ -47,6 +47,30 @@ class RumpyDB
     @id
   end
 
+  # Public: Delete the register with the Given ID.
+  #
+  # rumpy_id - An Integer representing the stored id of the object.
+  #
+  # Examples
+  #   rumpy_db.delete(1)
+  #
+  # Returns true if the given object was deleted, false otherwise.
+  def delete(rumpy_id)
+    objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
+    removed_objects = objects.collect do |row|
+      row =~ Regexp.new("(\\[#{rumpy_id}\\]\.+#{RUMPYDB_SEPARATOR})", Regexp::MULTILINE)
+      $1
+    end.compact
+
+    unless removed_objects.empty?
+      new_db = objects - removed_objects
+      save_db_dump(new_db)
+      return true
+    else
+      return false
+    end
+  end
+
   private
   def serialize(id,object)
     "[#{id}]#{Marshal.dump(object).dump}---EOO"
@@ -67,5 +91,13 @@ class RumpyDB
 
   def close_db(flush=true)
     File.open(@file_db,'r').close
+  end
+
+  def save_db_dump(objects)
+    file_open = File.open(@file_db, "w:UTF-8")
+    objects.each do |object|
+      file_open << object
+    end
+    file_open.close
   end
 end

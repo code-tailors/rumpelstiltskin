@@ -129,4 +129,47 @@ describe RumpyDB do
     end
   end
 
+  describe "#delete" do
+    describe "with two objects" do
+      before :each do
+        @test1 = TestObject.new
+        @test1.name = "Gianu"
+        @rumpydb.save(@test1)
+
+        @test2 = TestObject.new
+        @test2.name = "Tute"
+        @rumpydb.save(@test2)
+      end
+
+      it "deletes the last object" do
+        @rumpydb.all.size.must_equal 2
+
+        result = @rumpydb.delete(2) # delete the second object.
+
+        result.must_equal true
+        @rumpydb.all.size.must_equal 1
+        @rumpydb.all.first.name.must_equal @test1.name
+      end
+
+      it "deletes the first object" do
+        @rumpydb.all.size.must_equal 2
+
+        result = @rumpydb.delete(1) # delete the first objects.
+
+        result.must_equal true
+        @rumpydb.all.size.must_equal 1
+        @rumpydb.all.first.name.must_equal @test2.name
+      end
+
+      it "returns false and don't delete anything" do
+        @rumpydb.all.size.must_equal 2
+
+        result = @rumpydb.delete(1000) # non-existing id
+
+        result.must_equal false
+        @rumpydb.all.size.must_equal 2
+      end
+    end
+  end
+
 end
