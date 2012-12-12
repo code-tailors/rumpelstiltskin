@@ -82,9 +82,12 @@ class RumpyDB
   #
   # Examples
   #   rumpy_db.delete(1)
-  #   # => true
+  #   # => 1
   #
-  # Returns true if the given object was deleted, false otherwise.
+  #   rumpy_db.delete(433443) # non-existing ID
+  #   # => nil
+  #
+  # Returns the id of the deleted object ,nil otherwise.
   def delete(rumpy_id)
     objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
     removed_objects = objects.collect do |row|
@@ -95,9 +98,9 @@ class RumpyDB
     unless removed_objects.empty?
       new_db = objects - removed_objects
       save_db_dump(new_db)
-      return true
+      return rumpy_id
     else
-      return false
+      return nil
     end
   end
 

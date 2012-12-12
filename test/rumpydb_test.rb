@@ -146,7 +146,7 @@ describe RumpyDB do
 
         result = @rumpydb.delete(2) # delete the second object.
 
-        result.must_equal true
+        result.must_equal 2
         @rumpydb.all.size.must_equal 1
         @rumpydb.all.first.name.must_equal @test1.name
       end
@@ -156,7 +156,7 @@ describe RumpyDB do
 
         result = @rumpydb.delete(1) # delete the first objects.
 
-        result.must_equal true
+        result.must_equal 1
         @rumpydb.all.size.must_equal 1
         @rumpydb.all.first.name.must_equal @test2.name
       end
@@ -166,7 +166,7 @@ describe RumpyDB do
 
         result = @rumpydb.delete(1000) # non-existing id
 
-        result.must_equal false
+        result.must_equal nil
         @rumpydb.all.size.must_equal 2
       end
 
@@ -175,7 +175,7 @@ describe RumpyDB do
 
         result = @rumpydb.delete(nil)
 
-        result.must_equal false
+        result.must_equal nil
         @rumpydb.all.size.must_equal 2
       end
     end
@@ -194,7 +194,7 @@ describe RumpyDB do
 
         result = @rumpydb.delete(42)
 
-        result.must_equal true
+        result.must_equal 42
         @rumpydb.all.size.must_equal 99
       end
     end
