@@ -16,6 +16,15 @@ class RumpyDB
     @id = 0
   end
 
+  # Public: Retrieve all the object from the rumpy database.
+  #
+  # Examples
+  #   rumpy_db.find_all
+  #         or
+  #   rumpy_db.all
+  #   #=> [<#Object:0x007ff4aa83fb20>, <#Object:0x007fa4ba76ac19>]
+  #
+  # Returns all the objects from the rumpy database
   def find_all
     objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
     objects.map do |row|
@@ -26,6 +35,15 @@ class RumpyDB
 
   alias :all :find_all
 
+  # Public: Find the object with the given id.
+  #
+  # id - An Integer representing the id of the object
+  #
+  # Examples
+  #   rumpy_db.find(1)
+  #   # => <#Object:0x007ff4aa83fb20>
+  #
+  # Returns the object stored with the given id
   def find(id)
     objects = IO.readlines(@file_db, RUMPYDB_SEPARATOR)
     finded = objects.collect do |row|
@@ -47,6 +65,7 @@ class RumpyDB
   #
   # Examples
   #   rumpy_db.save(Object.new)
+  #   # => 1
   #
   # Returns the id assigned to the object in the db.
   def save(object)
@@ -63,6 +82,7 @@ class RumpyDB
   #
   # Examples
   #   rumpy_db.delete(1)
+  #   # => true
   #
   # Returns true if the given object was deleted, false otherwise.
   def delete(rumpy_id)
