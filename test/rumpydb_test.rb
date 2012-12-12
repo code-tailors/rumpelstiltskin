@@ -161,13 +161,41 @@ describe RumpyDB do
         @rumpydb.all.first.name.must_equal @test2.name
       end
 
-      it "returns false and don't delete anything" do
+      it "returns false with non-existing id and don't delete anything" do
         @rumpydb.all.size.must_equal 2
 
         result = @rumpydb.delete(1000) # non-existing id
 
         result.must_equal false
         @rumpydb.all.size.must_equal 2
+      end
+
+      it "returns false with nil as id and don't delete anything" do
+        @rumpydb.all.size.must_equal 2
+
+        result = @rumpydb.delete(nil)
+
+        result.must_equal false
+        @rumpydb.all.size.must_equal 2
+      end
+    end
+
+    describe "with one hundred objects" do
+      before :each do
+        100.times do |n|
+          test = TestObject.new
+          test.name = "Gianu - Test #{n}"
+          @rumpydb.save(test)
+        end
+      end
+
+      it "deletes an object from the middle" do
+        @rumpydb.all.size.must_equal 100
+
+        result = @rumpydb.delete(42)
+
+        result.must_equal true
+        @rumpydb.all.size.must_equal 99
       end
     end
   end
