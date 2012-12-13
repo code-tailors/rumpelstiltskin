@@ -104,6 +104,24 @@ class RumpyDB
     end
   end
 
+  # Public: Update the register with the given ID.
+  #
+  # rumpy_id - An Integer representing the stored id of the object.
+  # new_object - An object to be stored.
+  #
+  # Examples
+  #   rumpy_db.update(1, Object.new)
+  #   # => 1
+  #
+  # Returns the id of the updated object, nil if the id does not exist
+  def update(rumpy_id, new_object)
+    return nil unless delete(rumpy_id)
+    open_db('a+') do |file|
+      file << serialize(rumpy_id, new_object)
+    end
+    rumpy_id
+  end
+
   private
   def serialize(id,object)
     "[#{id}]#{Marshal.dump(object).dump}---EOO"

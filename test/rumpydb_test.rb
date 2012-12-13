@@ -166,7 +166,7 @@ describe RumpyDB do
 
         result = @rumpydb.delete(1000) # non-existing id
 
-        result.must_equal nil
+        result.must_be_nil
         @rumpydb.all.size.must_equal 2
       end
 
@@ -175,7 +175,7 @@ describe RumpyDB do
 
         result = @rumpydb.delete(nil)
 
-        result.must_equal nil
+        result.must_be_nil
         @rumpydb.all.size.must_equal 2
       end
     end
@@ -198,6 +198,77 @@ describe RumpyDB do
         @rumpydb.all.size.must_equal 99
       end
     end
+  end
+
+  describe "#update" do
+    describe "with two objects" do
+      before :each do
+        @test1 = TestObject.new
+        @test1.name = "Gianu"
+        @rumpydb.save(@test1)
+
+        @test2 = TestObject.new
+        @test2.name = "Tute"
+        @rumpydb.save(@test2)
+      end
+
+      it "updates the first objects" do
+        new_test = TestObject.new
+        new_test.name = "New Name"
+
+        result_value = @rumpydb.update(1, new_test)
+        result_value.must_equal 1
+
+        result_obj = @rumpydb.find(1)
+        result_obj.name.must_equal new_test.name
+      end
+
+      it "updates the second object" do
+        new_test = TestObject.new
+        new_test.name = "New Name"
+
+        result_value = @rumpydb.update(2, new_test)
+        result_value.must_equal 2
+
+        result_obj = @rumpydb.find(2)
+        result_obj.name.must_equal new_test.name
+      end
+
+      it "return nil when the id does not exist" do
+        result_value = @rumpydb.update(444555, TestObject.new)
+
+        result_value.must_be_nil
+      end
+
+      it "return nil when the id is nil" do
+        result_value = @rumpydb.update(nil, TestObject.new)
+
+        result_value.must_be_nil
+      end
+    end
+
+    describe "with one hundred objects" do
+      before :each do
+        100.times do |n|
+          test = TestObject.new
+          test.name = "Gianu - Test #{n}"
+          @rumpydb.save(test)
+        end
+      end
+
+      it "updates an object from the middle" do
+        new_test = TestObject.new
+        new_test.name = "New Name"
+
+        result_value = @rumpydb.update(42, new_test)
+        result_value.must_equal 42
+
+        result_obj = @rumpydb.find(42)
+        result_obj.name.must_equal new_test.name
+      end
+
+    end
+
   end
 
 end
